@@ -5,8 +5,6 @@ extern "C" {
 #ifndef CHIMP_DEMO_H_
 #define CHIMP_DEMO_H_
 
-#define PRINT_DEBUG false
-
 void chimp_demo_eyes_horizontal(void);
 
 void chimp_demo_eyes_vertical(void);
