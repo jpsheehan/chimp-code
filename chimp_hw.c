@@ -31,6 +31,11 @@ void chimp_hw_setup(void)
 
   delay(500);
 
+  chimp_hw_reset_all();
+}
+
+void chimp_hw_reset_all(void)
+{
   // make all motors return to neutral
   chimp_hw_move_eyes_vertical(VDIR_NEUTRAL);
   chimp_hw_move_eyes_horizontal(HDIR_NEUTRAL);
@@ -41,7 +46,7 @@ void chimp_hw_setup(void)
   chimp_hw_move_head_horizontal(HDIR_NEUTRAL);
   chimp_hw_move_head_vertical(VDIR_NEUTRAL);
 
-  // for the meantime, set these low
+  // until we figure out what the other hbridges do, set these low
   digitalWrite(CHIMP_PIN_UNKNOWN_A, LOW);
   digitalWrite(CHIMP_PIN_UNKNOWN_B, LOW);
   digitalWrite(CHIMP_PIN_UNKNOWN_C, LOW);

@@ -25,21 +25,23 @@ typedef enum {
 
 void chimp_hw_setup(void);
 
-void chimp_hw_move_eyes_vertical(vdir_t dir);
+void chimp_hw_reset_all(void);
 
 void chimp_hw_move_eyes_horizontal(hdir_t dir);
 
+void chimp_hw_move_eyes_vertical(vdir_t dir);
+
 void chimp_hw_move_eyelids(dir_t dir);
+
+void chimp_hw_move_eyebrows(vdir_t dir);
 
 void chimp_hw_move_jaw(dir_t dir);
 
-void chimp_hw_move_eyebrows(vdir_t dir);
+void chimp_hw_move_upper_lip(vdir_t dir);
 
 void chimp_hw_move_head_horizontal(hdir_t dir);
 
 void chimp_hw_move_head_vertical(vdir_t dir);
-
-void chimp_hw_move_upper_lip(vdir_t dir);
 
 #endif
 
