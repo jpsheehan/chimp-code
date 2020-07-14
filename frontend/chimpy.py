@@ -2,6 +2,7 @@ import serial
 import tkinter as tk
 import time
 from ChimpApi import ChimpApi
+from GuiInformationFrame import GuiInformationFrame
 
 class CardinalButtonPanel(tk.Frame):
 	
@@ -68,6 +69,9 @@ def nop(event):
 	print("NOP", event)
 	return None
 
+
+
+		
 class ChimpGui(tk.Frame):
 	
 	def __init__(self, master=None):
@@ -282,7 +286,7 @@ class ChimpGui(tk.Frame):
 
 def main():
 	window = tk.Tk()
-	app = ChimpGui(master=window)
+	app = GuiInformationFrame(master=window)
 	app.mainloop()
 
 if __name__ == "__main__":
