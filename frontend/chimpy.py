@@ -75,7 +75,7 @@ class ChimpGui(tk.Frame):
 		self.master = master
 		self.pack()
 		self.create_widgets()
-		# self.api = ChimpApi("/dev/ttyUSB1")
+		self.api = ChimpApi("/dev/ttyUSB1")
 	
 	def create_widgets(self):
 		self.lbl_ping = tk.Label(text="??? ms")
@@ -85,10 +85,16 @@ class ChimpGui(tk.Frame):
 		self.btn_ping.bind("<Button-1>", self.handle_ping_press)
 		self.btn_ping.pack()
 
+		self.btns_upper_lip = CardinalButtonPanel(master=self, title="Upper Lip", buttons={
+			"n": { "text": "Raise", "press": self.handle_upper_lip_up_press, "release":  self.handle_upper_lip_release, "state": "disabled" },
+			"s": { "text": "Lower", "press": self.handle_upper_lip_down_press, "release": self.handle_upper_lip_release, "state": "disabled" },
+			"c": { "text": "Off", "press": self.handle_upper_lip_release }
+		})
+
 		self.btns_eyebrows = CardinalButtonPanel(master=self, title="Eyebrows", buttons={
 			"n": { "text": "Raise", "press": self.handle_eyebrows_up_press, "release":  self.handle_eyebrows_release },
 			"s": { "text": "Lower", "press": self.handle_eyebrows_down_press, "release": self.handle_eyebrows_release },
-			"c": { "text": "Off", "press": self.handle_eyebrows_off }
+			"c": { "text": "Off", "press": self.handle_eyebrows_release }
 		})
 		
 		self.btns_head = CardinalButtonPanel(master=self, title="Head", buttons={
@@ -107,9 +113,24 @@ class ChimpGui(tk.Frame):
 			"c": { "text": "Off", "press": self.handle_eyes_off }
 		})
 
+		self.btns_eyelids = CardinalButtonPanel(master=self, title="Eyelids", buttons={
+			"n": { "text": "Open", "press": self.handle_eyelids_open_press, "release": self.handle_eyelids_release },
+			"s": { "text": "Close", "press": self.handle_eyelids_close_press, "release": self.handle_eyelids_release },
+			"c": { "text": "Off", "press": self.handle_eyelids_release },
+		})
+
+		self.btns_jaw = CardinalButtonPanel(master=self, title="Jaw", buttons={
+			"n": { "text": "Open", "press": self.handle_jaw_open_press, "release": self.handle_jaw_release },
+			"s": { "text": "Close", "press": self.handle_jaw_close_press, "release": self.handle_jaw_release },
+			"c": { "text": "Off", "press": self.handle_jaw_release },
+		})
+
 		self.btns_head.pack()
 		self.btns_eyes.pack()
 		self.btns_eyebrows.pack()
+		self.btns_eyelids.pack()
+		self.btns_upper_lip.pack()
+		self.btns_jaw.pack()
 	
 	def handle_error(self, error):
 		print("An error occurred:", error)
@@ -122,6 +143,54 @@ class ChimpGui(tk.Frame):
 		else:
 			self.lbl_ping["text"] = "error"
 	
+	### EYELIDS
+	def handle_eyelids_open_press(self, ev):
+		ok, err = self.api.move_eyelids('open')
+		if not ok:
+			self.handle_error(err)
+
+	def handle_eyelids_close_press(self, ev):
+		ok, err = self.api.move_eyelids('close')
+		if not ok:
+			self.handle_error(err)
+
+	def handle_eyelids_release(self, ev):
+		ok, err = self.api.move_eyelids('none')
+		if not ok:
+			self.handle_error(err)
+
+	### JAW
+	def handle_jaw_open_press(self, ev):
+		ok, err = self.api.move_jaw('open')
+		if not ok:
+			self.handle_error(err)
+
+	def handle_jaw_close_press(self, ev):
+		ok, err = self.api.move_jaw('close')
+		if not ok:
+			self.handle_error(err)
+
+	def handle_jaw_release(self, ev):
+		ok, err = self.api.move_jaw('none')
+		if not ok:
+			self.handle_error(err)
+
+	### UPPER LIP
+	def handle_upper_lip_up_press(self, ev):
+		ok, err = self.api.move_upper_lip('up')
+		if not ok:
+			self.handle_error(err)
+	
+	def handle_upper_lip_down_press(self, ev):
+		ok, err = self.api.move_upper_lip('down')
+		if not ok:
+			self.handle_error(err)
+	
+	def handle_upper_lip_release(self, ev):
+		ok, err = self.api.move_upper_lip('none')
+		if not ok:
+			self.handle_error(err)
+
 	### EYEBROWS
 	def handle_eyebrows_up_press(self, ev):
 		ok, err = self.api.move_eyebrows('up')
@@ -137,9 +206,6 @@ class ChimpGui(tk.Frame):
 		ok, err = self.api.move_eyebrows('none')
 		if not ok:
 			self.handle_error(err)
-
-	def handle_eyebrows_off(self, ev):
-		self.handle_eyebrows_release(ev)
 
 	### EYES VERTICAL
 	def handle_eyes_up_press(self, ev):
