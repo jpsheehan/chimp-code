@@ -9,6 +9,9 @@ class GuiMaster(Frame):
 	def __init__(self, master=None):
 		super().__init__(master)
 		self.master = master
+		self.master.title("Chimpanzee Controller")
+		self.master.minsize(800, 600)
+		self.master.maxsize(800, 600)
 		self.pack()
 		self.create_widgets()
 	
@@ -26,7 +29,7 @@ class GuiMaster(Frame):
 
 		self.tabs.add(self.tab_information, text="Information")
 		self.tabs.add(self.tab_controller, text="Controller")
-		self.tabs.pack()
+		self.tabs.pack(expand=1, fill='both')
 
 def main():
 	window = Tk()
