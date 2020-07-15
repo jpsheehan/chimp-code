@@ -1,9 +1,10 @@
-import tkinter as tk
+from tkinter import *
+from tkinter.ttk import *
 
-class GuiCardinalButtonFrame(tk.Frame):
+class GuiCardinalButtonFrame(Frame):
 	
 	def __init__(self, master=None, title=None, buttons={}):
-		super().__init__(master, relief=tk.RAISED)
+		super().__init__(master, relief=RAISED)
 		self.master = master
 		self.btns =	{}
 		self.title = title
@@ -36,7 +37,7 @@ class GuiCardinalButtonFrame(tk.Frame):
 	def create_widgets(self, buttons):
 		
 		if self.title:
-			self.lbl_title = tk.Label(master=self, text=self.title, font=("Helvetica", 16))
+			self.lbl_title = Label(master=self, text=self.title, font=("Helvetica", 16))
 			self.lbl_title.grid(row=0, column=1)
 		else:
 			self.lbl_title = None
@@ -49,7 +50,7 @@ class GuiCardinalButtonFrame(tk.Frame):
 			if r is None or c is None:
 				continue
 
-			self.btns[direction] = tk.Button(master=self, text=data["text"])
+			self.btns[direction] = Button(master=self, text=data["text"])
 			self.btns[direction].bind("<Button-1>", data["press"])
 
 			# two optional keys
