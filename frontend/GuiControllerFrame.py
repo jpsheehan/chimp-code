@@ -1,5 +1,6 @@
 from tkinter import *
 from tkinter.ttk import *
+import serial
 
 from GuiCardinalButtonFrame import GuiCardinalButtonFrame
 from ChimpApi import ChimpApi
@@ -10,34 +11,65 @@ def nop(event):
 
 class GuiControllerFrame(Frame):
 	
-	def __init__(self, master=None):
+	def __init__(self, master=None, device=None):
 		super().__init__(master)
 		self.master = master
 		self.pack()
 		self.create_widgets()
-		#self.api = ChimpApi("/dev/ttyUSB1")
+		self.device = device
+		self.api = None
+		if self.device is not None:
+			self.connect_serial(self.device)
 	
+	def connect_serial(self, device):
+		self.device = device
+		self.api = ChimpApi(device)
+
+		# hide the disconnected frame
+		self.disconnected_frame.pack_forget()
+
+		# show the connected frame
+		self.connected_frame.pack()
+	
+	def disconnect_serial(self):
+		if self.api:
+			del self.api
+			self.api = None
+
+		# hide the connected frame
+		self.connected_frame.pack_forget()
+
+		# show the disconnected frame
+		self.disconnected_frame.pack()
+
 	def create_widgets(self):
-		self.lbl_ping = Label(text="??? ms")
-		self.lbl_ping.pack()
+		
+		self.disconnected_frame = Frame(master=self)
+		self.lbl_disconnected = Label(master=self.disconnected_frame, text="Disconnected!", font=("Helvetica", 16, "bold italic"))
+		self.lbl_disconnected.pack()
 
-		self.btn_ping = Button(text="Ping")
-		self.btn_ping.bind("<Button-1>", self.handle_ping_press)
-		self.btn_ping.pack()
+		self.connected_frame = Frame(master=self)
+		
+		#self.lbl_ping = Label(master=self.connected_frame, text="??? ms")
+		#self.lbl_ping.pack()
 
-		self.btns_upper_lip = GuiCardinalButtonFrame(master=self, title="Upper Lip", buttons={
+		#self.btn_ping = Button(master=self.connected_frame, text="Ping")
+		#self.btn_ping.bind("<Button-1>", self.handle_ping_press)
+		#self.btn_ping.pack()
+
+		self.btns_upper_lip = GuiCardinalButtonFrame(master=self.connected_frame, title="Upper Lip", buttons={
 			"n": { "text": "Raise", "press": self.handle_upper_lip_up_press, "release":  self.handle_upper_lip_release, "state": "disabled" },
 			"s": { "text": "Lower", "press": self.handle_upper_lip_down_press, "release": self.handle_upper_lip_release, "state": "disabled" },
 			"c": { "text": "Off", "press": self.handle_upper_lip_release }
 		})
 
-		self.btns_eyebrows = GuiCardinalButtonFrame(master=self, title="Eyebrows", buttons={
+		self.btns_eyebrows = GuiCardinalButtonFrame(master=self.connected_frame, title="Eyebrows", buttons={
 			"n": { "text": "Raise", "press": self.handle_eyebrows_up_press, "release":  self.handle_eyebrows_release },
 			"s": { "text": "Lower", "press": self.handle_eyebrows_down_press, "release": self.handle_eyebrows_release },
 			"c": { "text": "Off", "press": self.handle_eyebrows_release }
 		})
 		
-		self.btns_head = GuiCardinalButtonFrame(master=self, title="Head", buttons={
+		self.btns_head = GuiCardinalButtonFrame(master=self.connected_frame, title="Head", buttons={
 			"n": { "text": "Up", "press": self.handle_head_up_press, "release": self.handle_head_v_release, "state": "disabled" },
 			"s": { "text": "Down", "press": self.handle_head_down_press, "release": self.handle_head_v_release, "state": "disabled" },
 			"w": { "text": "Left", "press": self.handle_head_left_press, "release": self.handle_head_h_release, "state": "disabled" },
@@ -45,7 +77,7 @@ class GuiControllerFrame(Frame):
 			"c": { "text": "Off", "press": self.handle_head_off },
 		})
 
-		self.btns_eyes = GuiCardinalButtonFrame(master=self, title="Eyes", buttons={
+		self.btns_eyes = GuiCardinalButtonFrame(master=self.connected_frame, title="Eyes", buttons={
 			"n": { "text": "Up", "press": self.handle_eyes_up_press, "release": self.handle_eyes_v_release, "state": "disabled" },
 			"s": { "text": "Down", "press": self.handle_eyes_down_press, "release": self.handle_eyes_v_release, "state": "disabled" },
 			"w": { "text": "Left", "press": self.handle_eyes_left_press, "release": self.handle_eyes_h_release },
@@ -53,24 +85,26 @@ class GuiControllerFrame(Frame):
 			"c": { "text": "Off", "press": self.handle_eyes_off }
 		})
 
-		self.btns_eyelids = GuiCardinalButtonFrame(master=self, title="Eyelids", buttons={
+		self.btns_eyelids = GuiCardinalButtonFrame(master=self.connected_frame, title="Eyelids", buttons={
 			"n": { "text": "Open", "press": self.handle_eyelids_open_press, "release": self.handle_eyelids_release },
 			"s": { "text": "Close", "press": self.handle_eyelids_close_press, "release": self.handle_eyelids_release },
 			"c": { "text": "Off", "press": self.handle_eyelids_release },
 		})
 
-		self.btns_jaw = GuiCardinalButtonFrame(master=self, title="Jaw", buttons={
+		self.btns_jaw = GuiCardinalButtonFrame(master=self.connected_frame, title="Jaw", buttons={
 			"n": { "text": "Open", "press": self.handle_jaw_open_press, "release": self.handle_jaw_release },
 			"s": { "text": "Close", "press": self.handle_jaw_close_press, "release": self.handle_jaw_release },
 			"c": { "text": "Off", "press": self.handle_jaw_release },
 		})
 
-		self.btns_head.pack()
-		self.btns_eyes.pack()
-		self.btns_eyebrows.pack()
-		self.btns_eyelids.pack()
-		self.btns_upper_lip.pack()
-		self.btns_jaw.pack()
+		self.btns_head.grid(row=1, column=0, padx=16, pady=16)
+		self.btns_eyes.grid(row=1, column=2, padx=16, pady=16)
+		self.btns_eyebrows.grid(row=0, column=0, padx=16, pady=16)
+		self.btns_eyelids.grid(row=0, column=2, padx=16, pady=16)
+		self.btns_upper_lip.grid(row=1, column=1, padx=16, pady=16)
+		self.btns_jaw.grid(row=2, column=1, padx=16, pady=16)
+
+		self.disconnected_frame.pack()
 	
 	def handle_error(self, error):
 		print("An error occurred:", error)

@@ -4,7 +4,7 @@ from tkinter.ttk import *
 class GuiCardinalButtonFrame(Frame):
 	
 	def __init__(self, master=None, title=None, buttons={}):
-		super().__init__(master, relief=RAISED)
+		super().__init__(master)
 		self.master = master
 		self.btns =	{}
 		self.title = title

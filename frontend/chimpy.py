@@ -3,6 +3,8 @@ from tkinter.ttk import *
 
 from GuiControllerFrame import GuiControllerFrame
 from GuiInformationFrame import GuiInformationFrame
+from GuiSerialPortSelector import GuiSerialPortSelector
+
 
 class GuiMaster(Frame):
 	
@@ -12,7 +14,7 @@ class GuiMaster(Frame):
 		self.master.title("Chimpanzee Controller")
 		self.master.minsize(800, 600)
 		self.master.maxsize(800, 600)
-		self.pack()
+		self.pack(fill=BOTH)
 		self.create_widgets()
 	
 	def create_widgets(self):
@@ -22,14 +24,23 @@ class GuiMaster(Frame):
 		self.lbl_author = Label(master=self, text="Jesse Sheehan <jps111@uclive.ac.nz>", font=("Helvetica", 12, "italic"))
 		self.lbl_author.pack()
 
-		self.tabs = Notebook(master=self)
+		self.serial = GuiSerialPortSelector(master=self, on_connect=self.on_serial_connect, on_disconnect=self.on_serial_disconnect)
+		self.serial.pack()
+
+		self.tabs = Notebook(master=self, width=800)
 
 		self.tab_information = GuiInformationFrame(master=self.tabs)
 		self.tab_controller = GuiControllerFrame(master=self.tabs)
 
 		self.tabs.add(self.tab_information, text="Information")
 		self.tabs.add(self.tab_controller, text="Controller")
-		self.tabs.pack(expand=1, fill='both')
+		self.tabs.pack()
+	
+	def on_serial_connect(self, device):
+		self.tab_controller.connect_serial(device)
+	
+	def on_serial_disconnect(self):
+		self.tab_controller.disconnect_serial()
 
 def main():
 	window = Tk()
