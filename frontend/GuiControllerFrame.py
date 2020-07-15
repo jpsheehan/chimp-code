@@ -33,7 +33,7 @@ class GuiControllerFrame(Frame):
 	
 	def disconnect_serial(self):
 		if self.api:
-			del self.api
+			self.api.close()
 			self.api = None
 
 		# hide the connected frame
@@ -50,12 +50,18 @@ class GuiControllerFrame(Frame):
 
 		self.connected_frame = Frame(master=self)
 		
-		#self.lbl_ping = Label(master=self.connected_frame, text="??? ms")
-		#self.lbl_ping.pack()
+		chimp_photo = PhotoImage(file="chimp.png")
+		self.img_chimp = Label(master=self.connected_frame, image=chimp_photo)
+		self.img_chimp.image = chimp_photo
 
-		#self.btn_ping = Button(master=self.connected_frame, text="Ping")
-		#self.btn_ping.bind("<Button-1>", self.handle_ping_press)
-		#self.btn_ping.pack()
+		self.ping_frame = Frame(master=self.connected_frame)
+		
+		self.lbl_ping = Label(master=self.ping_frame, text="??? ms")
+		self.lbl_ping.pack()
+
+		self.btn_ping = Button(master=self.ping_frame, text="Ping")
+		self.btn_ping.bind("<Button-1>", self.handle_ping_press)
+		self.btn_ping.pack()
 
 		self.btns_upper_lip = GuiCardinalButtonFrame(master=self.connected_frame, title="Upper Lip", buttons={
 			"n": { "text": "Raise", "press": self.handle_upper_lip_up_press, "release":  self.handle_upper_lip_release, "state": "disabled" },
@@ -103,6 +109,8 @@ class GuiControllerFrame(Frame):
 		self.btns_eyelids.grid(row=0, column=2, padx=16, pady=16)
 		self.btns_upper_lip.grid(row=1, column=1, padx=16, pady=16)
 		self.btns_jaw.grid(row=2, column=1, padx=16, pady=16)
+		self.img_chimp.grid(row=0, column=1, padx=16, pady=16)
+		self.ping_frame.grid(row=2, column=0, padx=16, pady=16)
 
 		self.disconnected_frame.pack()
 	

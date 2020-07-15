@@ -30,8 +30,11 @@ class ChimpApi:
 		self.ser = serial.Serial(device, 115200)
 
 	def __del__(self):
-		self.ser.close()
+		self.close()
 	
+	def close(self):
+		self.ser.close()
+
 	def _send(self, command, direction=DIR_NONE):
 		self.ser.write(bytes([command, direction]))
 		res = self.ser.read(RX_PACKET_SIZE)
