@@ -3,7 +3,7 @@ from tkinter.ttk import *
 import serial
 
 from GuiCardinalButtonFrame import GuiCardinalButtonFrame
-from ChimpApi import ChimpApi
+from api import ChimpApi
 
 def nop(event):
 	print("NOP", event)
@@ -50,7 +50,7 @@ class GuiControllerFrame(Frame):
 
 		self.connected_frame = Frame(master=self)
 		
-		chimp_photo = PhotoImage(file="chimp.png")
+		chimp_photo = PhotoImage(file="data/chimp.png")
 		self.img_chimp = Label(master=self.connected_frame, image=chimp_photo)
 		self.img_chimp.image = chimp_photo
 
